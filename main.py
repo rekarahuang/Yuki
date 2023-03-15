@@ -1,16 +1,21 @@
-# This is a sample Python script.
+# 红色：工作区
+# 绿色：暂存区
+# 蓝色：暂存区（文件有修改）
+# 无颜色：位于本地仓库区/已提交到远程仓库区
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from typing import Union
+
+from fastapi import FastAPI
+
+app = FastAPI()
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+@app.get("/items/{item_id}")
+def read_item(item_id: int, q: Union[str, None] = None):
+    return {"item_id": item_id, "q": q}
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
