@@ -8,21 +8,23 @@
 from typing import Union
 from fastapi import FastAPI
 
-from pydantic import BaseModel
-
 # step2. 创建一个FastAPI实例（所有 API 的主要交互对象）
+# FastAPI 是直接从 Starlette 继承的类，可以通过 FastAPI 使用所有的 Starlette 的功能
 app = FastAPI()
 
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Union[bool, None] = None
 
-
+# step3. 创建一个路径操作
+# 路径：URL中从第一个/起的后半部分
+# 操作：http方法（post创建/get读取/put更新/delete删除）
+# 定义一个路径操作装饰器，路径：/，操作：get
 @app.get("/")
+# step4. 定义路径操作函数 当FastAPI接收一个使用GET方法访问URL【/】的请求时这个函数会被调用
 def read_root():
-    return {"Hello": "World"}
+    return {"Hello": "World"}  # 可返回（dict、list、str、int、Pydantic模型）
 
+
+# step5. 运行开发服务器
+# uvicorn main:app --reload
 '''
 uvicorn main:app命令含义如下:
 
@@ -32,15 +34,11 @@ app：在 main.py 文件中通过 app = FastAPI() 创建的对象。
 --port:指定启动的端口，该代码中指定了18080端口。
 '''
 
-# step3. 创建一个路径操作（指URL中从第一个 / 起的后半部分）
+
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 
-
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item_id}
 
 '''
 http://127.0.0.1:8005/items/5?q=somequery
@@ -59,8 +57,6 @@ http://127.0.0.1:8005/docs
 另一个自动生成的文档（由 ReDoc 生成）
 '''
 
-
-
 '''
 常见http状态返回码：
 200 - 服务器成功返回网页
@@ -71,3 +67,7 @@ http://127.0.0.1:8005/docs
 502 - 错误网关
 503 - 服务不可用
 '''
+
+# 报错  Error loading ASGI app. Could not import module "test01".
+# 错误原因 没有使用完整路径（路径用.）
+#  uvicorn FastAPI-Demo.test01:app --reload --port 8005
