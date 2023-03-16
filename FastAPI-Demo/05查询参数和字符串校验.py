@@ -67,11 +67,13 @@ async def read_items(q: Union[List[str], None] = Query(default=None)):
 
 # 具有默认值的查询参数列表 / 多个值
 @app.get("/items/")
-async def read_items(q: List[str] = Query(default=["foo", "bar"])):
+# async def read_items(q: List[str] = Query(default=["foo", "bar"])):
+#　直接使用list代替List[str]
+async def read_items(q: list = Query(default=[])):
     query_items = {"q": q}
     return query_items
 
-# 声明更多元数据
+# 声明更多元数据：添加title
 @app.get("/items/")
 async def read_items(
     q: Union[str, None] = Query(default=None, title="Query string", min_length=3)
@@ -80,7 +82,7 @@ async def read_items(
     if q:
         results.update({"q": q})
     return results
-
+# ：添加description
 @app.get("/items/")
 async def read_items(
     q: Union[str, None] = Query(
@@ -90,6 +92,15 @@ async def read_items(
         min_length=3,
     )
 ):
+    results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
+    if q:
+        results.update({"q": q})
+    return results
+
+# 别名参数
+# 当查询参数非有效Python变量名时，使用别名
+@app.get("/items/")
+async def read_items(q: Union[str, None] = Query(default=None, alias="item-query")):
     results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
     if q:
         results.update({"q": q})
